@@ -5,8 +5,9 @@ import store from './store'
 import ElementUI from 'element-ui'
 import './styles.scss'
 import './common.scss'
-import VueSocketIO from 'vue-socket.io'
-Vue.use(ElementUI)
+import VueSocketIO from 'vue-socket.io';
+Vue.use(ElementUI) 
+import '@/components/mian'
  
 Vue.config.productionTip = false
 Vue.use(new VueSocketIO({

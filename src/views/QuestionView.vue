@@ -243,7 +243,7 @@ export default {
 };
 </script>
 
-<style scope >
+<style scoped >
 .aaa {
   height: 320px;
   background-color: #f9f9f9;

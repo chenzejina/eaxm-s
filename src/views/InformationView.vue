@@ -105,6 +105,7 @@ export default {
         pageSize: pageSize,
         pageNum: pageNum,
       }).then((res) => {
+        console.log(res);
         this.from = res.data.data.data.rows;
         this.totalpage = res.data.data.data.count;
       });
@@ -121,5 +122,5 @@ export default {
 };
 </script>
 
-<style lang="scss" scope>
+<style lang="scss" scoped>
 </style>

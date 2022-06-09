@@ -119,7 +119,7 @@ export default {
   },
   created() {
     getUserInfoApi().then((res) => {
-      this.form = res.data.data[0];  
+      this.form = res.data.data;  
     });
   },
   watch: {

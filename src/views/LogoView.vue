@@ -123,9 +123,8 @@ export default {
       return res.result;
     },
     async submit() {
-      var isValidata = this.getValidataResult();
-      if (!isValidata) return;
-
+      var isValidata = await this.getValidataResult();
+      if (!isValidata) return; 
       const { username, password, captcha } = this;
       let res = await loginApi({
         username,
@@ -162,10 +161,13 @@ export default {
   display: flex;
 }
 .box {
+  display: flex;
   width: 350px;
   height: 500px;
   background-color: rgb(30, 128, 225);
-  transform: skew(-10deg);
+  transform: skew(-10deg); 
+    align-items: center;
+    flex-direction: column;
 }
 .text {
   display: flex;

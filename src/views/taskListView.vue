@@ -3,16 +3,16 @@
     <div class="box">
       <h3>任务列表</h3>
       <div class="listr">
-        <el-form ref="form" :model="form" label-width="80px" class="listr">
+        <el-form ref="ruslue" :model="ruslue" label-width="80px" class="listr">
           <el-form-item label="活动名称">
-            <el-input v-model="form.name"></el-input>
+            <el-input v-model="ruslue.name"></el-input>
           </el-form-item>
           <el-form-item label="活动时间">
             <el-col :span="11">
               <el-date-picker
                 type="date"
                 placeholder="选择日期"
-                v-model="form.date1"
+                v-model="ruslue.date1"
                 style="width: 100%"
               ></el-date-picker>
             </el-col>
@@ -20,7 +20,7 @@
             <el-col :span="11">
               <el-time-picker
                 placeholder="选择时间"
-                v-model="form.date2"
+                v-model="ruslue.date2"
                 style="width: 100%"
               ></el-time-picker>
             </el-col>
@@ -58,7 +58,7 @@
           <span style="margin-left: 10px">{{ scope.row.taskName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="任務簡介" width="340" align="center">
+      <el-table-column label="任務簡介" width="300" align="center">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.desc }}</span>
         </template>
@@ -75,7 +75,7 @@
           }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="150" align="center">
+      <el-table-column width="100" align="center">
         <template slot-scope="scope">
           <span style="margin-left: 10px" v-if="scope.row.isReceived == 1"
             >已领取</span
@@ -83,8 +83,9 @@
           <span style="margin-left: 10px" v-else>未领取</span>
         </template>
       </el-table-column>
-      <el-table-column width="200" align="center">
+      <el-table-column width="300" align="center">
         <template slot-scope="scope">
+          <el-link type="primary"  @click=" edit(scope.row)">编辑任务</el-link>
           <el-link type="primary" @click="releasTask(scope.row)"
             >继续发布</el-link
           >
@@ -98,7 +99,7 @@
             @click="receive(scope.row)"
             >领取任务</el-link
           >
-          <el-link type="primary" class="pd-5" v-else></el-link>
+          <el-link type="primary" class="pd-5" v-else> </el-link>
         </template>
       </el-table-column>
     </el-table>
@@ -134,6 +135,18 @@
         <el-button type="primary" @click="clickTask">确 定</el-button>
       </span>
     </el-dialog>
+
+
+    <el-dialog
+      title="提示"
+      :visible.sync="flag"
+      width="30%"
+      :before-close="handleClose"
+    >
+      <creat-task ref="tesk"  :asdf="comp"  :options='astes'  @user="js"></creat-task>
+      <span slot="footer" class="dialog-footer"> 
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -144,11 +157,13 @@ import {
   getUserInfoApi,
   releaseTask,
   taskDetail,
+  updateTask
 } from "@/api/api";
 export default {
   data() {
     return {
       dialogVisible: false,
+      flag: false,
       from: [],
       currentPage4: 1,
       totalpage: 0,
@@ -156,12 +171,14 @@ export default {
       pageSize: 10,
       pageNum: 1,
       options: "",
+      astes:[],
       value1: "",
       id: "",
       optionsl: [],
       option: [],
       xx: "",
-      form: {
+      comp:'',
+      ruslue: {
         name: "",
         region: "",
         date1: "",
@@ -170,7 +187,8 @@ export default {
         type: [],
         resource: "",
         desc: "",
-      },
+      }, 
+      userids:[]
     };
   },
   created() {
@@ -179,10 +197,40 @@ export default {
     });
     this.listrender();
     getUserInfoApi().then((res) => {
-      this.id = res.data.data[0].id;
-    });
+      this.id = res.data.data.id;
+    });  
   },
-  methods: {
+  methods: {  
+    js(el,userid){   
+      this.userids=userid
+      this.flag=false 
+ updateTask({
+       id:el.id,
+       name:el.name,
+       duration:el.duration,
+       level:el.level,
+       desc:el.desc
+      }).then(res=>{
+        console.log(res);
+        this.$refs.tesk.clear() 
+        releaseTask({
+        userIds: this.userids,
+        taskId: this.xx,
+      }).then((res) => {
+        console.log(res);
+      });
+      this.value1 = [];
+      this.listrender();
+      }) 
+    },
+    //编辑任务
+    edit(el){  
+       this.value1 = [];
+      this.xx = el.id;
+      this.flag=true 
+      this.comp=el 
+      this.listOption(el) 
+    },
     //处理数据
     listOption(item) {
       taskDetail({
@@ -205,6 +253,7 @@ export default {
         );
         console.log("--------------this.options--------------");
         console.log(this.option);
+        this.astes=this.option
       });
     },
     // 发布任务
@@ -249,6 +298,8 @@ export default {
       this.$confirm("确认关闭？")
         .then(() => {
           done();
+          
+        this.$refs.tesk.clear()
         })
         .catch(() => {});
     },
@@ -257,8 +308,9 @@ export default {
       createList({
         pageSize: pageSize,
         pageNum: pageNum,
+        taskName: this.ruslue.name,
       }).then((res) => {
-        console.log(res.data.data.rows);
+        console.log(res.data);
         this.from = res.data.data.rows;
         this.totalpage = res.data.data.count;
       });
@@ -272,7 +324,7 @@ export default {
       this.listrender();
     },
     onSubmit() {
-      console.log("submit!");
+      this.listrender();
     },
   },
 };

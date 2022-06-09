@@ -439,7 +439,7 @@ export default {
 </script>
  
 
-<style  scope lang="scss">
+<style  lang="scss" scoped>
 .aaa {
   height: 320px;
 

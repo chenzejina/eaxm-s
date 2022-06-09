@@ -1,5 +1,39 @@
 import axios from "axios";
 
+axios.interceptors.request.use(function (config) {
+    // 在发送请求之前做些什么
+    config.headers.authorization=sessionStorage.getItem('token')
+    return config;
+  }, function (error) {
+    // 对请求错误做些什么
+    return Promise.reject(error);
+  });
+
+// 添加响应拦截器
+axios.interceptors.response.use(function (response) {
+    // 对响应数据做点什么
+    if(response.data.status==401){
+        window.location.href='/'
+    }
+    return response;
+  }, function (error) {
+    // 对响应错误做点什么
+    return Promise.reject(error);
+  });
+
+  /**
+ * @description 局部配置 token
+ */
+const baseURL='/api'
+const getPostConfig =  { 
+    baseURL, 
+    headers: {
+        contentType: 'application/json', 
+        authorization:sessionStorage.getItem('token')
+    } 
+}
+ 
+
 /** 
  * @description 获取验证码
  * **/
@@ -18,7 +52,7 @@ export function getCaptchaApi() {
  * @param payload.caprcha 
 **/
 export function registerApi(payload = {}) {
-    return axios.post('/user/register', payload, getPostConfig())
+    return axios.post('/user/register', payload, getPostConfig)
 }
 
 /**
@@ -29,34 +63,22 @@ export function registerApi(payload = {}) {
  * @param payload.captcha
  **/
 export function loginApi(payload = {}) {
-    return axios.post('/user/login', payload, getPostConfig())
+    return axios.post('/user/login', payload, getPostConfig)
 }
 
-/**
- * @description 局部配置 token
- */
-const getPostConfig = function () {
-    return {
-        baseURL: '/api',
-        headers: {
-            contentType: 'application/json',
-            authorization: sessionStorage.getItem("token"),
-        }
-    };
-}
 
 /** 
  * @description 获取用户信息接口
  * **/
 export function getUserInfoApi(payload = {}) {
-    return axios.post('/user/info', payload, getPostConfig())
+    return axios.post('/user/info', payload, getPostConfig)
 }
 
 /** 
  * @description 退出登录接口
  * **/
 export function logOutApi(payload = {}) {
-    return axios.post('/user/logout', payload, getPostConfig())
+    return axios.post('/user/logout', payload, getPostConfig )
 }
 
 /**
@@ -65,7 +87,7 @@ export function logOutApi(payload = {}) {
  * @param payload.type  //题目类型 
  */
 export function questionList(payload){
-    return axios.post('api/question/list',payload)
+    return axios.post('question/list',payload,getPostConfig)
 }
 /**
  * @description 创建题接口
@@ -78,7 +100,7 @@ export function questionList(payload){
  * @param payload.level     // 难度系数 1：简单  2：普通 3：困难
  */
 export function questionCreate(payload){
-    return axios.post('/api/question/create',payload)
+    return axios.post('/question/create',payload,getPostConfig)
 }
 
 
@@ -94,7 +116,7 @@ export function questionCreate(payload){
  * @param payload.level     // 难度系数 1：简单  2：普通 3：困难
  */
 export function questionModify(payload){
-    return axios.post('/api/question/update',payload)
+    return axios.post('/question/update',payload,getPostConfig)
 }
 
    
@@ -106,7 +128,7 @@ export function questionModify(payload){
  * @param payload.type  //题目类型 
  */
 export function questiondalete(payload){
-    return axios.post('/api/question/delete',payload)
+    return axios.post('/question/delete',payload,getPostConfig)
 } 
 
 /**
@@ -116,7 +138,7 @@ export function questiondalete(payload){
  * @param payload.type  //题目类型 
  */
 export function modifyInformation(payload){
-    return axios.post('/api/user/update',payload)
+    return axios.post('/user/update',payload,getPostConfig)
 } 
 
 /**
@@ -126,7 +148,7 @@ export function modifyInformation(payload){
  * @param payload.type  //题目类型 
  */
 export function notepad(payload){
-    return axios.post('/api/diary/list',payload)
+    return axios.post('/diary/list',payload)
 } 
 
 /**
@@ -136,7 +158,7 @@ export function notepad(payload){
  * @param payload.type  //题目类型 
  */
 export function diraryCreate(payload){
-    return axios.post('/api/diary/create',payload)
+    return axios.post('/diary/create',payload,getPostConfig)
 } 
 
 
@@ -147,7 +169,7 @@ export function diraryCreate(payload){
  * @param payload.type  //题目类型 
  */
 export function createTesk(payload){
-    return axios.post('/api/task/create',payload)
+    return axios.post('/task/create',payload,getPostConfig)
 } 
 
 /**
@@ -157,7 +179,7 @@ export function createTesk(payload){
  * @param payload.type  //题目类型 
  */
 export function createList(payload){
-    return axios.post('/api/task/list',payload)
+    return axios.post('/task/list',payload,getPostConfig)
 } 
 
 /**
@@ -167,7 +189,7 @@ export function createList(payload){
  * @param payload.type  //题目类型 
  */
 export function userList(payload){
-    return axios.post('/api/user/list',payload)
+    return axios.post('/user/list',payload,getPostConfig)
 } 
 
 /**
@@ -177,7 +199,17 @@ export function userList(payload){
  * @param payload.type  //题目类型 
  */
 export function releaseTask(payload){
-    return axios.post('/api/task/release',payload)
+    return axios.post('/task/release',payload,getPostConfig)
+} 
+
+/**
+ * @description 编辑任务接口
+ * @param payload <object>
+ * @param payload.id  //题目id
+ * @param payload.type  //题目类型 
+ */
+export function updateTask(payload){
+    return axios.post('/task/update',payload,getPostConfig)
 } 
 
 /**
@@ -187,7 +219,7 @@ export function releaseTask(payload){
  * @param payload.type  //题目类型 
  */
 export function taskDetail(payload){
-    return axios.post('/api/task/detail',payload)
+    return axios.post('/task/detail',payload,getPostConfig)
 } 
 
 /**
@@ -197,7 +229,7 @@ export function taskDetail(payload){
  * @param payload.type  //题目类型 
  */
 export function createRole(payload){
-    return axios.post('/api/role/create',payload)
+    return axios.post('/role/create',payload,getPostConfig)
 }
 
 /**
@@ -207,7 +239,7 @@ export function createRole(payload){
  * @param payload.type  //题目类型 
  */
 export function roleGroupList(payload){
-    return axios.post('/api/roleGroup/list',payload)
+    return axios.post('/roleGroup/list',payload,getPostConfig)
 } 
 
 /**
@@ -217,5 +249,5 @@ export function roleGroupList(payload){
  * @param payload.type  //题目类型 
  */
 export function roleEntry(payload){
-    return axios.post('/api/role/list',payload)
+    return axios.post('/role/list',payload,getPostConfig)
 } 

@@ -30,7 +30,7 @@
 
 
 
-<style scope lang="scss">
+<style  lang="scss" scoped>
     .topic{
         font-size: 14px;
         padding: 20px;
